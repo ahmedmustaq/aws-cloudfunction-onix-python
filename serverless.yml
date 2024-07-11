@@ -1,0 +1,28 @@
+
+service: aws-cloudfunction-isbn-python
+
+provider:
+  name: aws
+  runtime: python3.8
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+      Resource: "arn:aws:s3:::your-bucket-name/*"
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "sns:Publish"
+      Resource: "*"
+
+functions:
+  processIsbn:
+    handler: mbs-service.handler.lambda_handler
+    events:
+      - s3:
+          bucket: your-bucket-name
+          event: s3:ObjectCreated:*
+          existing: true
